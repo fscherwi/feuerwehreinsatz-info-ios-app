@@ -3,7 +3,7 @@ import React, {Component} from 'react';
 import {View} from 'react-native';
 import {WebView} from 'react-native-webview';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import crashlytics from '@react-native-firebase/crashlytics';
+//import crashlytics from '@react-native-firebase/crashlytics';
 
 const jsCode = `
         (function() {
@@ -54,15 +54,15 @@ export default class FweiView extends Component<Props> {
                 'FWEI.persistentSession',
                 res.persistentSession.value,
               );
-              crashlytics().log('persistentSession saved.', res);
+              //crashlytics().log('persistentSession saved.', res);
               console.log('persistentSession saved.', res);
             } else {
-              crashlytics().log('persistentSession not found.', res);
+              //crashlytics().log('persistentSession not found.', res);
               console.log('persistentSession not found.', res);
             }
           })
           .catch(e => {
-            crashlytics().recordError(e);
+            //crashlytics().recordError(e);
             console.error(e);
           });
         break;

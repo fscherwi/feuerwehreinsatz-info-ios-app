@@ -8,7 +8,7 @@ import CookieManager from '@react-native-cookies/cookies';
 import config from './config';
 import KeepAwake from 'react-native-keep-awake';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import crashlytics from '@react-native-firebase/crashlytics';
+//import crashlytics from '@react-native-firebase/crashlytics';
 
 function setPersistentSession(domain) {
   if (!domain) {
@@ -30,16 +30,16 @@ function setPersistentSession(domain) {
           },
           true,
         ).then(res => {
-          crashlytics().log('CookieManager.set =>', domain, persistentSession);
+          //crashlytics().log('CookieManager.set =>', domain, persistentSession);
           console.log('CookieManager.set =>', domain, persistentSession);
         });
       } else {
-        crashlytics().log('no persistensSession');
+        //crashlytics().log('no persistensSession');
         console.log('no persistensSession');
       }
     })
     .catch(e => {
-      crashlytics().recordError(e);
+      //crashlytics().recordError(e);
       console.error(e);
     });
 }
@@ -54,7 +54,7 @@ export default class App extends Component<Props> {
       baseURL: undefined,
       init: false,
     };
-    crashlytics().log('App started');
+    //crashlytics().log('App started');
   }
 
   async componentDidMount() {
@@ -65,7 +65,7 @@ export default class App extends Component<Props> {
         this.setState({baseURL});
       }
     } catch (e) {
-      crashlytics().recordError(e);
+      //crashlytics().recordError(e);
       const baseURL = config.defaultBaseURL;
       await setPersistentSession(baseURL);
       this.setState({baseURL});
