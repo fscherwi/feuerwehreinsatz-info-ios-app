@@ -18,10 +18,9 @@ function setPersistentSession(domain: string) {
                 name: 'persistentSession',
                 value: persistentSession,
                 domain: domain,
-                origin: domain,
                 path: '/',
                 version: '1',
-                expiration: '2030-01-01T12:30:00.00-05:00'
+                expires: '2030-01-01T12:30:00.00-05:00'
             }, true).then((_res) => {
                 crashlytics().log(`CookieManager.set => ${domain} ${persistentSession}`);
                 console.log(`CookieManager.set => ${domain} ${persistentSession}`);
@@ -68,7 +67,6 @@ export default class App extends Component<Props> {
     }
 
     render() {
-        const {init, options, popup, baseURL} = this.state;
         return (
             <SafeAreaView style={styles.safeArea}>
                 <KeepAwake />
@@ -77,29 +75,29 @@ export default class App extends Component<Props> {
                     barStyle="light-content"
                 />
                 <View style={styles.appArea}>
-                    {baseURL && <View style={{flex: 1}}>
-                        <FweiView baseURL={baseURL}
+                    {this.state.baseURL && <View style={{flex: 1}}>
+                        <FweiView baseURL={this.state.baseURL}
                                   onOpenOptions={() => this.setState({options: true})}
                                   onOpenPopup={(url: string) => this.setState({popup: url})}
                         />
                     </View>}
-                    {popup && <View style={{flex: 1000}}>
+                    {this.state.popup && <View style={{flex: 1000}}>
                         <Popup
-                            baseURL={baseURL}
-                            url={popup}
+                            baseURL={this.state.baseURL}
+                            url={this.state.popup}
                             onClose={() => this.setState({popup: false})}
                         />
                         </View>
                     }
-                    {options && <View style={{flex: 1000}}>
+                    {this.state.options && <View style={{flex: 1000}}>
                         <Options
-                            baseURL={baseURL}
+                            baseURL={this.state.baseURL}
                             onClose={() => this.setState({options: false})}
                             onSave={(baseURL: string) => this.setState({options: false, baseURL})}
                         />
                     </View>
                     }
-                    {init && !baseURL && <View style={{flex: 1000}}>
+                    {this.state.init && !this.state.baseURL && <View style={{flex: 1000}}>
                         <Welcome
                             baseURL={config.defaultBaseURL}
                             onSave={(baseURL: string) => this.setState({baseURL})}

@@ -25,14 +25,12 @@ export default class Options extends Component<Props> {
     }
 
     render() {
-        const {onClose, baseURL} = this.props;
-        const {unsavedServer, customServer} = this.state;
         return (<View>
             <Text style={styles.header}>Options</Text>
 
             <Text style={styles.subheader}>Serverauswahl:</Text>
-            {customServer || <Picker style={styles.picker}
-                                     selectedValue={unsavedServer}
+            {this.state.customServer || <Picker style={styles.picker}
+                                     selectedValue={this.state.unsavedServer}
                                      onValueChange={(itemValue, _itemIndex) => this.setState({unsavedServer: itemValue})}>
                 {defaultServer.map((server) => <Picker.Item label={server.caption} key={server.caption} value={server.url}/>)}
             </Picker>
@@ -44,23 +42,23 @@ export default class Options extends Component<Props> {
                         <Switch
                             style={styles.toggleSwitch}
                             disabled={false}
-                            value={customServer}
+                            value={this.state.customServer}
                             onValueChange={(value) => this.setState({customServer: value})}
                         />
                     </View>
                 </View>
-                {customServer && (<TextInput
+                {this.state.customServer && (<TextInput
                     style={{height: 40}}
                     autoCapitalize = 'none'
                     placeholder="Server"
                     clearButtonMode="always"
-                    value={unsavedServer}
+                    value={this.state.unsavedServer}
                     onChangeText={(update) => this.setState({unsavedServer: update.toLowerCase()})}
                 />)}
             </View>
 
-            <Button title="Speichern" onPress={() => this.save(unsavedServer)} />
-            <Button title={"Zurück zu " + baseURL} onPress={() => onClose()} />
+            <Button title="Speichern" onPress={() => this.save(this.state.unsavedServer)} />
+            <Button title={"Zurück zu " + this.props.baseURL} onPress={() => this.props.onClose()} />
             <Text>Version: {getVersion()}</Text>
         </View>);
     }

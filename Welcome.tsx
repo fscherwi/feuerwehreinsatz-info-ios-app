@@ -22,14 +22,13 @@ export default class Welcome extends Component<Props> {
         return stored;
     }
     render() {
-        const {unsavedServer, customServer} = this.state;
         return (<View>
             <Text style={styles.header}>Willkommen!</Text>
 
             <Text style={styles.subheader}>Bitte wählen Sie ihren Server aus:</Text>
-            {customServer || <Picker style={styles.picker}
-                                     selectedValue={unsavedServer}
-                                     onValueChange={(itemValue, itemIndex) => this.setState({unsavedServer: itemValue})}>
+            {this.state.customServer || <Picker style={styles.picker}
+                                     selectedValue={this.state.unsavedServer}
+                                     onValueChange={(itemValue, _itemIndex) => this.setState({unsavedServer: itemValue})}>
                 {defaultServer.map((server) => <Picker.Item label={server.caption} key={server.caption} value={server.url}/>)}
             </Picker>
             }
@@ -40,22 +39,22 @@ export default class Welcome extends Component<Props> {
                         <Switch
                             style={styles.toggleSwitch}
                             disabled={false}
-                            value={customServer}
+                            value={this.state.customServer}
                             onValueChange={(value) => this.setState({customServer: value})}
                         />
                     </View>
                 </View>
-                {customServer && (<TextInput
+                {this.state.customServer && (<TextInput
                     style={styles.customServerInput}
                     autoCapitalize = 'none'
                     placeholder="Server"
                     clearButtonMode="always"
-                    value={unsavedServer}
+                    value={this.state.unsavedServer}
                     onChangeText={(update) => this.setState({unsavedServer: update.toLowerCase()})}
                 />)}
             </View>
 
-            <Button title="Server übernehmen" onPress={() => this.save(unsavedServer)} />
+            <Button title="Server übernehmen" onPress={() => this.save(this.state.unsavedServer)} />
             <Text style={styles.infoText}>Die Servereinstellung kann später jederzeit über das Optionsmenü geändert werden.</Text>
         </View>);
     }
