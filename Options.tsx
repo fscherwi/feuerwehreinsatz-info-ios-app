@@ -8,9 +8,9 @@ import config from './config';
 const {defaultServer} = config;
 
 type Props = {
-    onClose:any;
+    onClose: () => void;
     baseURL:string;
-    onSave:any;
+    onSave: (baseURL: string) => void;
 };
 export default class Options extends Component<Props> {
     state = {
@@ -59,7 +59,7 @@ export default class Options extends Component<Props> {
                 />)}
             </View>
 
-            <Button title="Speichern" onPress={() => this.save(baseURL)} />
+            <Button title="Speichern" onPress={() => this.save(unsavedServer)} />
             <Button title={"Zurück zu " + baseURL} onPress={() => onClose()} />
             <Text>Version: {getVersion()}</Text>
         </View>);

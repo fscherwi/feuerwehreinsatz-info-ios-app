@@ -37,13 +37,13 @@ const jsCode = `
     `;
 
 type Props = {
-    onOpenOptions: any;
-    onOpenPopup: any;
+    onOpenOptions: () => void;
+    onOpenPopup: (url: string) => void;
     baseURL: string;
 };
 export default class FweiView extends Component<Props> {
 
-    handleWebViewMessage(message: { method: any; data: any; }) {
+    handleWebViewMessage(message: { method: string; data: string; }) {
         switch (message.method) {
             case 'openConfig':
                 this.props.onOpenOptions();

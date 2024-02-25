@@ -3,7 +3,7 @@ import {View, Button} from 'react-native';
 import { WebView } from 'react-native-webview';
 
 type Props = {
-    onClose: any;
+    onClose: () => void;
     url: string;
     baseURL: string;
 };

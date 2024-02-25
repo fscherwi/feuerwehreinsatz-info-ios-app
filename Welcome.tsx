@@ -8,7 +8,7 @@ const {defaultServer} = config;
 
 type Props = {
     baseURL: string;
-    onSave: any;
+    onSave: (baseURL: string) => void;
 };
 export default class Welcome extends Component<Props> {
     state = {
