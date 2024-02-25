@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, StrictMode } from 'react';
 import {View, SafeAreaView, StyleSheet, StatusBar} from 'react-native';
 import FweiView from './FweiView';
 import Options from './Options';
@@ -68,44 +68,46 @@ export default class App extends Component<Props> {
 
     render() {
         return (
-            <SafeAreaView style={styles.safeArea}>
-                <KeepAwake />
-                <StatusBar
-                    backgroundColor="#222"
-                    barStyle="light-content"
-                />
-                <View style={styles.appArea}>
-                    {this.state.baseURL && <View style={{flex: 1}}>
-                        <FweiView baseURL={this.state.baseURL}
-                                  onOpenOptions={() => this.setState({options: true})}
-                                  onOpenPopup={(url: string) => this.setState({popup: url})}
-                        />
-                    </View>}
-                    {this.state.popup && <View style={{flex: 1000}}>
-                        <Popup
-                            baseURL={this.state.baseURL}
-                            url={this.state.popup}
-                            onClose={() => this.setState({popup: false})}
-                        />
+            <StrictMode>
+                <SafeAreaView style={styles.safeArea}>
+                    <KeepAwake />
+                    <StatusBar
+                        backgroundColor="#222"
+                        barStyle="light-content"
+                    />
+                    <View style={styles.appArea}>
+                        {this.state.baseURL && <View style={{flex: 1}}>
+                            <FweiView baseURL={this.state.baseURL}
+                                    onOpenOptions={() => this.setState({options: true})}
+                                    onOpenPopup={(url: string) => this.setState({popup: url})}
+                            />
+                        </View>}
+                        {this.state.popup && <View style={{flex: 1000}}>
+                            <Popup
+                                baseURL={this.state.baseURL}
+                                url={this.state.popup}
+                                onClose={() => this.setState({popup: false})}
+                            />
+                            </View>
+                        }
+                        {this.state.options && <View style={{flex: 1000}}>
+                            <Options
+                                baseURL={this.state.baseURL}
+                                onClose={() => this.setState({options: false})}
+                                onSave={(baseURL: string) => this.setState({options: false, baseURL})}
+                            />
                         </View>
-                    }
-                    {this.state.options && <View style={{flex: 1000}}>
-                        <Options
-                            baseURL={this.state.baseURL}
-                            onClose={() => this.setState({options: false})}
-                            onSave={(baseURL: string) => this.setState({options: false, baseURL})}
-                        />
+                        }
+                        {this.state.init && !this.state.baseURL && <View style={{flex: 1000}}>
+                            <Welcome
+                                baseURL={config.defaultBaseURL}
+                                onSave={(baseURL: string) => this.setState({baseURL})}
+                            />
+                        </View>
+                        }
                     </View>
-                    }
-                    {this.state.init && !this.state.baseURL && <View style={{flex: 1000}}>
-                        <Welcome
-                            baseURL={config.defaultBaseURL}
-                            onSave={(baseURL: string) => this.setState({baseURL})}
-                        />
-                    </View>
-                    }
-                </View>
-            </SafeAreaView>
+                </SafeAreaView>
+            </StrictMode>
         );
     }
 }

@@ -1,5 +1,5 @@
 import CookieManager from '@react-native-cookies/cookies';
-import React, { Component } from 'react';
+import React, { Component, useRef } from 'react';
 import {View} from 'react-native';
 import { WebView } from 'react-native-webview';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -42,6 +42,12 @@ type Props = {
     baseURL: string;
 };
 export default class FweiView extends Component<Props> {
+    webView: React.RefObject<WebView<{}>>;
+
+    constructor(props: Props) {
+        super(props);
+        this.webView = React.createRef();
+    }
 
     handleWebViewMessage(message: { method: string; data: string; }) {
         switch (message.method) {
@@ -69,6 +75,7 @@ export default class FweiView extends Component<Props> {
                 console.log("unknown message", message.data);
         }
     }
+
     onShouldStartLoadWithRequest(navState: ShouldStartLoadRequest) {
         console.log(navState.url, this.props.baseURL);
         if (navState.url.indexOf("//" + this.props.baseURL.toLowerCase()) === -1 && navState.url.indexOf("about:blank") === -1) {
@@ -77,21 +84,24 @@ export default class FweiView extends Component<Props> {
         }
         return true;
     }
+
     render() {
-        const {baseURL} = this.props;
         return (<View style={{flex: 1}}>
             <WebView
-                source={{uri: (baseURL === 'about:blank' ? '' : 'https://') + baseURL}}
+                source={{uri: (this.props.baseURL === 'about:blank' ? '' : 'https://') + this.props.baseURL}}
                 onShouldStartLoadWithRequest={(navState) => this.onShouldStartLoadWithRequest(navState)}
                 style={{flex: 1}}
-                ref="webview"
+                ref={this.webView}
                 injectedJavaScript={jsCode}
-                bounce={false}
+                bounces={false}
                 onMessage={(event)=> this.handleWebViewMessage(JSON.parse(event.nativeEvent.data))}
                 onContentProcessDidTerminate={(syntheticEvent) => {
                     const { nativeEvent } = syntheticEvent;
                     console.warn('Content process terminated, reloading', nativeEvent);
-                    this.refs.webview.reload();
+                    if(this.webView.current)
+                    {
+                        this.webView.current.reload();
+                    }
                 }}
             />
         </View>);
