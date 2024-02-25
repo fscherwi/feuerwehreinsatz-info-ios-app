@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {View, Text, WebView, Button, TextInput, SafeAreaView, StyleSheet, StatusBar, NativeModules} from 'react-native';
+import {View, SafeAreaView, StyleSheet, StatusBar} from 'react-native';
 import FweiView from './FweiView';
 import Options from './Options';
 import Popup from './Popup';
@@ -10,7 +10,7 @@ import KeepAwake from '@sayem314/react-native-keep-awake';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import crashlytics from '@react-native-firebase/crashlytics';
 
-function setPersistentSession(domain) {
+function setPersistentSession(domain: string) {
     if (!domain) return Promise.resolve();
     return AsyncStorage.getItem('FWEI.persistentSession').then((persistentSession) => {
         if (persistentSession) {
@@ -22,9 +22,9 @@ function setPersistentSession(domain) {
                 path: '/',
                 version: '1',
                 expiration: '2030-01-01T12:30:00.00-05:00'
-            }, true).then((res) => {
-                crashlytics().log('CookieManager.set =>', domain, persistentSession);
-                console.log('CookieManager.set =>', domain, persistentSession);
+            }, true).then((_res) => {
+                crashlytics().log(`CookieManager.set => ${domain} ${persistentSession}`);
+                console.log(`CookieManager.set => ${domain} ${persistentSession}`);
             });
         } else {
             crashlytics().log("no persistensSession");
@@ -38,9 +38,15 @@ function setPersistentSession(domain) {
 
 type Props = {};
 export default class App extends Component<Props> {
-    constructor(props) {
+    state = {
+        popup: '',
+        options: false,
+        baseURL: '',
+        init: false,
+    };
+
+    constructor(props: Props) {
         super(props);
-        this.state = {popup: false, options: false, baseURL: undefined, init: false};
         crashlytics().log('App started');
     }
 
@@ -52,7 +58,7 @@ export default class App extends Component<Props> {
                 this.setState({baseURL});
             }
         } catch (e) {
-            crashlytics().recordError(e);
+            crashlytics().recordError(e as Error);
             const baseURL = config.defaultBaseURL;
             await setPersistentSession(baseURL);
             this.setState({baseURL});
@@ -62,7 +68,7 @@ export default class App extends Component<Props> {
     }
 
     render() {
-        const {init, options, popup, legacyData, baseURL} = this.state;
+        const {init, options, popup, baseURL} = this.state;
         return (
             <SafeAreaView style={styles.safeArea}>
                 <KeepAwake />
@@ -73,32 +79,31 @@ export default class App extends Component<Props> {
                 <View style={styles.appArea}>
                     {baseURL && <View style={{flex: 1}}>
                         <FweiView baseURL={baseURL}
-                                  legacyData={legacyData}
                                   onOpenOptions={() => this.setState({options: true})}
-                                  onOpenPopup={(url) => this.setState({popup: url})}>
-                        </FweiView>
+                                  onOpenPopup={(url: string) => this.setState({popup: url})}
+                        />
                     </View>}
                     {popup && <View style={{flex: 1000}}>
                         <Popup
                             baseURL={baseURL}
                             url={popup}
-                            onClose={() => this.setState({popup: false})}>
-                        </Popup>
+                            onClose={() => this.setState({popup: false})}
+                        />
                         </View>
                     }
                     {options && <View style={{flex: 1000}}>
                         <Options
                             baseURL={baseURL}
                             onClose={() => this.setState({options: false})}
-                            onSave={(baseURL) => this.setState({options: false, baseURL})}>
-                        </Options>
+                            onSave={(baseURL: string) => this.setState({options: false, baseURL})}
+                        />
                     </View>
                     }
                     {init && !baseURL && <View style={{flex: 1000}}>
                         <Welcome
                             baseURL={config.defaultBaseURL}
-                            onSave={(baseURL) => this.setState({baseURL})}>
-                        </Welcome>
+                            onSave={(baseURL: string) => this.setState({baseURL})}
+                        />
                     </View>
                     }
                 </View>

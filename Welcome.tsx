@@ -1,24 +1,27 @@
 import React, { Component } from 'react';
-import {View, Text, WebView, Button, TextInput, Switch, StyleSheet} from 'react-native';
+import {View, Text, Button, TextInput, Switch, StyleSheet} from 'react-native';
 import {Picker} from '@react-native-picker/picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import config from './config';
 const {defaultServer} = config;
 
-type Props = {};
+type Props = {
+    baseURL: string;
+    onSave: any;
+};
 export default class Welcome extends Component<Props> {
-    constructor(props) {
-        super(props);
-        this.state = {unsavedServer: props.baseURL}
-    }
-    save({baseURL}) {
+    state = {
+        unsavedServer: this.props.baseURL,
+        customServer: false
+    };
+
+    save(baseURL: string) {
         const stored = AsyncStorage.setItem('FWEI.baseURL', baseURL);
         this.props.onSave(baseURL);
         return stored;
     }
     render() {
-        const {onClose, baseURL} = this.props;
         const {unsavedServer, customServer} = this.state;
         return (<View>
             <Text style={styles.header}>Willkommen!</Text>
@@ -52,7 +55,7 @@ export default class Welcome extends Component<Props> {
                 />)}
             </View>
 
-            <Button flex title="Server übernehmen" onPress={() => this.save({baseURL: unsavedServer})} />
+            <Button title="Server übernehmen" onPress={() => this.save(unsavedServer)} />
             <Text style={styles.infoText}>Die Servereinstellung kann später jederzeit über das Optionsmenü geändert werden.</Text>
         </View>);
     }

@@ -7,18 +7,23 @@ import {getVersion} from 'react-native-device-info';
 import config from './config';
 const {defaultServer} = config;
 
-type Props = {};
+type Props = {
+    onClose:any;
+    baseURL:string;
+    onSave:any;
+};
 export default class Options extends Component<Props> {
-    constructor(props) {
-        super(props);
-        const customServer = !defaultServer.find((server) => server.url === props.baseURL);
-        this.state = {unsavedServer: props.baseURL, customServer}
-    }
-    save({baseURL}) {
+    state = {
+        unsavedServer: this.props.baseURL,
+        customServer: (!defaultServer.find((server) => server.url === this.props.baseURL))
+    };
+
+    save(baseURL: string) {
         const stored = AsyncStorage.setItem('FWEI.baseURL', baseURL);
         this.props.onSave(baseURL);
         return stored;
     }
+
     render() {
         const {onClose, baseURL} = this.props;
         const {unsavedServer, customServer} = this.state;
@@ -28,7 +33,7 @@ export default class Options extends Component<Props> {
             <Text style={styles.subheader}>Serverauswahl:</Text>
             {customServer || <Picker style={styles.picker}
                                      selectedValue={unsavedServer}
-                                     onValueChange={(itemValue, itemIndex) => this.setState({unsavedServer: itemValue})}>
+                                     onValueChange={(itemValue, _itemIndex) => this.setState({unsavedServer: itemValue})}>
                 {defaultServer.map((server) => <Picker.Item label={server.caption} key={server.caption} value={server.url}/>)}
             </Picker>
             }
@@ -54,8 +59,8 @@ export default class Options extends Component<Props> {
                 />)}
             </View>
 
-            <Button flex title="Speichern" onPress={() => this.save({baseURL: unsavedServer})} />
-            <Button flex title={"Zurück zu " + baseURL} onPress={() => onClose()} />
+            <Button title="Speichern" onPress={() => this.save(baseURL)} />
+            <Button title={"Zurück zu " + baseURL} onPress={() => onClose()} />
             <Text>Version: {getVersion()}</Text>
         </View>);
     }

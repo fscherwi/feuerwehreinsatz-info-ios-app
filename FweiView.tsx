@@ -1,10 +1,10 @@
 import CookieManager from '@react-native-cookies/cookies';
 import React, { Component } from 'react';
-import {View, Text, Button, TextInput} from 'react-native';
-import {defaultBaseURL} from './config';
+import {View} from 'react-native';
 import { WebView } from 'react-native-webview';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import crashlytics from '@react-native-firebase/crashlytics';
+import { ShouldStartLoadRequest } from 'react-native-webview/lib/WebViewTypes';
 
 const jsCode = `
         (function() {
@@ -36,13 +36,14 @@ const jsCode = `
         })();
     `;
 
-type Props = {};
+type Props = {
+    onOpenOptions: any;
+    onOpenPopup: any;
+    baseURL: string;
+};
 export default class FweiView extends Component<Props> {
-    constructor(props) {
-        super(props);
-        this.state = {};
-    }
-    handleWebViewMessage(message) {
+
+    handleWebViewMessage(message: { method: any; data: any; }) {
         switch (message.method) {
             case 'openConfig':
                 this.props.onOpenOptions();
@@ -52,11 +53,11 @@ export default class FweiView extends Component<Props> {
                     .then((res) => {
                         if (res.persistentSession && res.persistentSession.value) {
                             AsyncStorage.setItem('FWEI.persistentSession', res.persistentSession.value);
-                            crashlytics().log('persistentSession saved.', res);
-                            console.log('persistentSession saved.', res);
+                            crashlytics().log(`persistentSession saved. ${res}`);
+                            console.log(`persistentSession saved. ${res}`);
                         } else {
-                            crashlytics().log('persistentSession not found.', res);
-                            console.log('persistentSession not found.', res);
+                            crashlytics().log(`persistentSession not found. ${res}`);
+                            console.log(`persistentSession not found. ${res}`);
                         }
                     })
                     .catch(e => {
@@ -68,7 +69,7 @@ export default class FweiView extends Component<Props> {
                 console.log("unknown message", message.data);
         }
     }
-    onShouldStartLoadWithRequest(navState) {
+    onShouldStartLoadWithRequest(navState: ShouldStartLoadRequest) {
         const {baseURL} = this.props;
         console.log(navState.url, baseURL);
         if (navState.url.indexOf("//" + baseURL.toLowerCase()) === -1 && navState.url.indexOf("about:blank") === -1) {
