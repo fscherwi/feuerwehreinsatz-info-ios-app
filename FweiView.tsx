@@ -1,6 +1,6 @@
 import CookieManager from '@react-native-cookies/cookies';
-import React, { Component, useRef } from 'react';
-import {View} from 'react-native';
+import React, { Component } from 'react';
+import { View } from 'react-native';
 import { WebView } from 'react-native-webview';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import crashlytics from '@react-native-firebase/crashlytics';
@@ -98,10 +98,7 @@ export default class FweiView extends Component<Props> {
                 onContentProcessDidTerminate={(syntheticEvent) => {
                     const { nativeEvent } = syntheticEvent;
                     console.warn('Content process terminated, reloading', nativeEvent);
-                    if(this.webView.current)
-                    {
-                        this.webView.current.reload();
-                    }
+                    this.webView.current?.reload();
                 }}
             />
         </View>);
